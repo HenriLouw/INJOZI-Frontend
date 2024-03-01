@@ -1,7 +1,13 @@
 <template>
   <div class="container-fluid">
     <h1 class="text-center mb-4">F1 World Champions</h1>
-    <div class="row">
+    <div v-if="loading" class="text-center my-4">
+      <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+      <p class="mt-2">Loading champions...</p>
+    </div>
+    <div v-else class="row">
       <div class="col-md-6">
         <div class="card border-primary mb-4">
           <div class="card-header bg-primary text-white">Champions List</div>
@@ -46,18 +52,29 @@ import { ref, onMounted } from 'vue';
 const champions = ref([]);
 const selectedYear = ref(null);
 const raceWinners = ref([]);
+const loading = ref(false);
 
 const fetchChampions = async () => {
-  try {
-    const response = await fetch('http://ergast.com/api/f1/driverstandings/1.json?limit=100&offset=55');
-    const data = await response.json();
-    champions.value = data.MRData.StandingsTable.StandingsLists.map((standing) => ({
-      year: standing.season,
-      name: standing.DriverStandings[0].Driver.givenName + ' ' + standing.DriverStandings[0].Driver.familyName,
-      isWorldChampion: standing.DriverStandings[0].position === '1',
-    }));
-  } catch (error) {
-    console.error('Error fetching champions:', error);
+  loading.value = true;
+  let cachedChampions = localStorage.getItem('f1Champions');
+  if (cachedChampions) {
+    champions.value = JSON.parse(cachedChampions);
+    loading.value = false;
+  } else {
+    try {
+      const response = await fetch('http://ergast.com/api/f1/driverstandings/1.json?limit=100&offset=55');
+      const data = await response.json();
+      champions.value = data.MRData.StandingsTable.StandingsLists.map((standing) => ({
+        year: standing.season,
+        name: standing.DriverStandings[0].Driver.givenName + ' ' + standing.DriverStandings[0].Driver.familyName,
+        isWorldChampion: standing.DriverStandings[0].position === '1',
+      }));
+      localStorage.setItem('f1Champions', JSON.stringify(champions.value));
+      loading.value = false;
+    } catch (error) {
+      console.error('Error fetching champions:', error);
+      loading.value = false;
+    }
   }
 };
 
