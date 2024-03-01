@@ -8,7 +8,7 @@
       <p class="mt-2">Loading champions...</p>
     </div>
     <div v-else class="row">
-      <div class="col-md-6">
+      <div class="col-md-12">
         <div class="card border-primary mb-4">
           <div class="card-header bg-primary text-white">Champions List</div>
           <ul class="list-group list-group-flush">
@@ -25,7 +25,7 @@
           </ul>
         </div>
       </div>
-      <div class="col-md-6">
+      <div class="col-md-12">
         <div v-if="selectedYear">
           <h2 class="text-center mb-4">Race Winners {{ selectedYear }}</h2>
           <div class="card border-success">
