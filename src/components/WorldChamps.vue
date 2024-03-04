@@ -20,7 +20,7 @@
             >
               <span v-if="champion.isWorldChampion" class="badge bg-warning me-2">World Champion</span>
               <span class="fw-bold">{{ champion.year }}</span>
-              <span class="ms-2">{{ champion.name }}</span>
+              <span class="ms-2">{{ champion.name }} ({{ champion.nationality }}) - {{ champion.racesWon }} races won</span>
             </li>
           </ul>
         </div>
@@ -41,7 +41,8 @@
                   class="list-group-item"
                 >
                   <span class="trophy-icon me-2">🏆</span>
-                  <span class="fw-bold">{{ winner }}</span>
+                  <span class="fw-bold">{{ winner.driver }} ({{ winner.nationality }}) </span>
+                  <span class="race-name text-white fw-bold">| {{ winner.raceName }}</span>
                 </li>
               </ul>
             </div>
@@ -70,11 +71,17 @@ const fetchChampions = async () => {
     try {
       const response = await fetch('http://ergast.com/api/f1/driverstandings/1.json?limit=100&offset=55');
       const data = await response.json();
-      champions.value = data.MRData.StandingsTable.StandingsLists.map((standing) => ({
-        year: standing.season,
-        name: standing.DriverStandings[0].Driver.givenName + ' ' + standing.DriverStandings[0].Driver.familyName,
-        isWorldChampion: standing.DriverStandings[0].position === '1',
-      }));
+      champions.value = data.MRData.StandingsTable.StandingsLists.map((standing) => {
+        const championData = {
+          year: standing.season,
+          name: standing.DriverStandings[0].Driver.givenName + ' ' + standing.DriverStandings[0].Driver.familyName,
+          nationality: standing.DriverStandings[0].Driver.nationality,
+          isWorldChampion: standing.DriverStandings[0].position === '1',
+          racesWon: standing.DriverStandings[0].wins,
+        };
+        return championData;
+      });
+
       localStorage.setItem('f1Champions', JSON.stringify(champions.value));
       loading.value = false;
     } catch (error) {
@@ -88,7 +95,11 @@ const fetchRaceWinners = async (year) => {
   try {
     const response = await fetch(`http://ergast.com/api/f1/${year}/results/1.json`);
     const data = await response.json();
-    raceWinners.value = data.MRData.RaceTable.Races.map((race) => race.Results[0].Driver.givenName + ' ' + race.Results[0].Driver.familyName);
+    raceWinners.value = data.MRData.RaceTable.Races.map((race) => ({
+      driver: race.Results[0].Driver.givenName + ' ' + race.Results[0].Driver.familyName,
+      nationality: race.Results[0].Driver.nationality,
+      raceName: race.raceName,
+    }));
   } catch (error) {
     console.error('Error fetching race winners:', error);
   }
@@ -100,7 +111,7 @@ const showRaceWinners = (year) => {
 };
 
 const isWorldChampion = (winner) => {
-  return champions.value.some(champion => winner.includes(champion.name) && selectedYear.value === champion.year);
+  return champions.value.some(champion => winner.driver.includes(champion.name) && selectedYear.value === champion.year);
 };
 
 onMounted(() => {
@@ -118,5 +129,9 @@ onMounted(() => {
 }
 .trophy-icon {
   font-size: 1.2rem;
+}
+.race-name {
+  font-weight: normal;
+  color: #6c757d;
 }
 </style>
