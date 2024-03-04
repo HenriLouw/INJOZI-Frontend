@@ -1,13 +1,13 @@
 <template>
-  <div class="container-fluid">
+  <div class="container-fluid p-4">
     <h1 class="text-center mb-4">F1 World Champions</h1>
-    <div v-if="loading" class="text-center my-4">
+    <div v-if="loading" class="text-center my-4 ">
       <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden">Loading...</span>
       </div>
       <p class="mt-2">Loading champions...</p>
     </div>
-    <div v-else class="row">
+    <div v-else class="row  d-flex justify-content-center">
       <div class="col-md-6">
         <div class="card border-primary mb-4">
           <div class="card-header bg-primary text-white">Champions List</div>
@@ -18,9 +18,10 @@
               class="list-group-item champion-item"
               @click="showRaceWinners(champion.year)"
             >
+            <span v-if="champion.isWorldChampion" class="badge bg-warning me-2">World Champion</span>
               <span class="fw-bold">{{ champion.year }}</span>
               <span class="ms-2">{{ champion.name }}</span>
-              <span v-if="champion.isWorldChampion" class="badge bg-warning ms-2">World Champion</span>
+              
             </li>
           </ul>
         </div>
@@ -29,7 +30,8 @@
         <div class="col-md-12 text-center mb-4">
           <h1>Race Winners {{ selectedYear }}</h1>
         </div>
-        <div class="col-md-6">
+        <div class="row d-flex justify-content-center">
+        <div class="col-md-6 ">
           <div class="card border-success">
             <div class="card-header bg-success text-white">Race Winners</div>
             <ul class="list-group list-group-flush">
@@ -38,11 +40,13 @@
                 :key="index"
                 class="list-group-item"
               >
-                {{ winner }}
+              <span class="trophy-icon me-2">🏆</span>
+              <span class="fw-bold">{{ winner }}</span>
               </li>
             </ul>
           </div>
         </div>
+      </div>
       </div>
     </div>
   </div>
@@ -107,5 +111,13 @@ onMounted(() => {
 }
 .champion-item:hover {
   background-color: #f0f0f0;
+}
+
+.trophy-icon {
+  font-size: 1.2rem;
+}
+
+.border-custom {
+  border: 3px solid #007bff;
 }
 </style>
