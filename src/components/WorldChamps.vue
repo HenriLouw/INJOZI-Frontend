@@ -8,7 +8,7 @@
       <p class="mt-2">Loading champions...</p>
     </div>
     <div v-else class="row">
-      <div class="col-md-12">
+      <div class="col-md-6">
         <div class="card border-primary mb-4">
           <div class="card-header bg-primary text-white">Champions List</div>
           <ul class="list-group list-group-flush">
@@ -18,16 +18,18 @@
               class="list-group-item champion-item"
               @click="showRaceWinners(champion.year)"
             >
-              <span>{{ champion.year }}</span>
-              <span>{{ champion.name }}</span>
-              <span v-if="champion.isWorldChampion" class="badge bg-warning">World Champion</span>
+              <span class="fw-bold">{{ champion.year }}</span>
+              <span class="ms-2">{{ champion.name }}</span>
+              <span v-if="champion.isWorldChampion" class="badge bg-warning ms-2">World Champion</span>
             </li>
           </ul>
         </div>
       </div>
-      <div class="col-md-12">
-        <div v-if="selectedYear">
-          <h2 class="text-center mb-4">Race Winners {{ selectedYear }}</h2>
+      <div v-if="selectedYear" class="row">
+        <div class="col-md-12 text-center mb-4">
+          <h1>Race Winners {{ selectedYear }}</h1>
+        </div>
+        <div class="col-md-6">
           <div class="card border-success">
             <div class="card-header bg-success text-white">Race Winners</div>
             <ul class="list-group list-group-flush">
