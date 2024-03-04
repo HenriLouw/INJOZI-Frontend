@@ -18,10 +18,9 @@
               class="list-group-item champion-item"
               @click="showRaceWinners(champion.year)"
             >
-            <span v-if="champion.isWorldChampion" class="badge bg-warning me-2">World Champion</span>
+              <span v-if="champion.isWorldChampion" class="badge bg-warning me-2">World Champion</span>
               <span class="fw-bold">{{ champion.year }}</span>
               <span class="ms-2">{{ champion.name }}</span>
-              
             </li>
           </ul>
         </div>
@@ -31,22 +30,23 @@
           <h1>Race Winners {{ selectedYear }}</h1>
         </div>
         <div class="row d-flex justify-content-center">
-        <div class="col-md-6 ">
-          <div class="card border-success">
-            <div class="card-header bg-success text-white">Race Winners</div>
-            <ul class="list-group list-group-flush">
-              <li
-                v-for="(winner, index) in raceWinners"
-                :key="index"
-                class="list-group-item"
-              >
-              <span class="trophy-icon me-2">🏆</span>
-              <span class="fw-bold">{{ winner }}</span>
-              </li>
-            </ul>
+          <div class="col-md-6 ">
+            <div class="card border-success">
+              <div class="card-header bg-success text-white">Race Winners</div>
+              <ul class="list-group list-group-flush">
+                <li
+                  v-for="(winner, index) in raceWinners"
+                  :key="index"
+                  :class="{ 'bg-success text-white': isWorldChampion(winner) }"
+                  class="list-group-item"
+                >
+                  <span class="trophy-icon me-2">🏆</span>
+                  <span class="fw-bold">{{ winner }}</span>
+                </li>
+              </ul>
+            </div>
           </div>
         </div>
-      </div>
       </div>
     </div>
   </div>
@@ -99,6 +99,10 @@ const showRaceWinners = (year) => {
   fetchRaceWinners(year);
 };
 
+const isWorldChampion = (winner) => {
+  return champions.value.some(champion => winner.includes(champion.name) && selectedYear.value === champion.year);
+};
+
 onMounted(() => {
   fetchChampions();
 });
@@ -112,12 +116,7 @@ onMounted(() => {
 .champion-item:hover {
   background-color: #f0f0f0;
 }
-
 .trophy-icon {
   font-size: 1.2rem;
-}
-
-.border-custom {
-  border: 3px solid #007bff;
 }
 </style>
